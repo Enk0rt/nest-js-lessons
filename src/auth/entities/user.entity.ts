@@ -1,5 +1,12 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { TokenEntity } from './token.entity';
 
 @Entity()
 export class UserEntity {
@@ -17,6 +24,8 @@ export class UserEntity {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
+  @OneToMany(() => TokenEntity, (token) => token.user)
+  tokens: TokenEntity[];
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }

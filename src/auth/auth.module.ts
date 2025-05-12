@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { JwtStrategy } from './jwt.strategy';
+import { TokenEntity } from './entities/token.entity';
 
 @Module({
   imports: [
@@ -16,13 +17,10 @@ import { JwtStrategy } from './jwt.strategy';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: `${configService.get<string>('JWT_EXPIRATION_TIME')}s`,
-        },
       }),
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, TokenEntity]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
